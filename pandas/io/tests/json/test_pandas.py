@@ -972,6 +972,13 @@ DataFrame\\.index values are different \\(100\\.0 %\\)
         self.assertEqual(result, expected)
         assert_frame_equal(pd.read_json(result, lines=True), df)
 
+    def test_handling_escape_character(self):
+        # GH15096
+        df = DataFrame([["qwer"], ["asdf \\"], ["zxcv"]], columns=["test"])
+        result = df.to_json(orient="records", lines=True)
+        expected = ('{"test":"qwer"}\n{"test":"asdf \\\\"}\n{"test":"zxcv"}')
+        self.assertEqual(result, expected)
+
     def test_latin_encoding(self):
         if compat.PY2:
             self.assertRaisesRegexp(
